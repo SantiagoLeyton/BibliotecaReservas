@@ -14,25 +14,44 @@ public class Main {
             new RegistroEventos()
         );
 
-        ReservaFacade fachada = new ReservaFacade(salas, reservas, observadores);
+        ManejadorValidacion horario = new ValidacionHorario();
+        ManejadorValidacion capacidad = new ValidacionCapacidad();
+        ManejadorValidacion estudianteVal = new ValidacionEstudiante();
+
+        horario.setSiguiente(capacidad);
+        capacidad.setSiguiente(estudianteVal);
+
+        ReservaFacade fachada = new ReservaFacade(salas, reservas, observadores, horario);
         Estudiante laura = new Estudiante("E001", "Laura");
 
-        System.out.println("--- PRUEBA ESTACIÓN 6: OBSERVER Y FACHADA ---");
-        
-        Reserva reserva = fachada.realizarReserva(
+        System.out.println("--- PRUEBA ESTACIÓN 8: CASO EXITOSO ---");
+        fachada.realizarReserva(
             laura,
-            LocalDate.now().plusDays(7),
-            LocalTime.of(14, 0),
+            LocalDate.now().plusDays(2),
+            LocalTime.of(10, 0),
             2,
             4,
             new SeleccionPorCapacidad()
-        ).orElseThrow();
+        );
 
-        System.out.println("\nEstado actual de la reserva:");
-        System.out.println(reserva);
+        System.out.println("\n--- PRUEBA ESTACIÓN 8: FALLO POR HORARIO (21:00) ---");
+        fachada.realizarReserva(
+            laura,
+            LocalDate.now().plusDays(2),
+            LocalTime.of(21, 0),
+            2,
+            4,
+            new SeleccionPorCapacidad()
+        );
 
-        System.out.println("\n--- CAMBIO DE ESTADO MANUAL ---");
-        reserva.cambiarEstado("Cancelada");
-        System.out.println(reserva);
+        System.out.println("\n--- PRUEBA ESTACIÓN 8: FALLO POR CAPACIDAD ---");
+        fachada.realizarReserva(
+            laura,
+            LocalDate.now().plusDays(2),
+            LocalTime.of(14, 0),
+            2,
+            50,
+            new SeleccionPorCapacidad()
+        );
     }
 }

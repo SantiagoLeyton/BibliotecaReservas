@@ -9,11 +9,13 @@ public class ReservaFacade {
     private final RepositorioSalas repositorioSalas;
     private final RepositorioReservas repositorioReservas;
     private final List<ObservadorReserva> observadores;
+    private final ManejadorValidacion cadenaValidacion;
 
-    public ReservaFacade(RepositorioSalas repositorioSalas, RepositorioReservas repositorioReservas, List<ObservadorReserva> observadores) {
+    public ReservaFacade(RepositorioSalas repositorioSalas, RepositorioReservas repositorioReservas, List<ObservadorReserva> observadores, ManejadorValidacion cadenaValidacion) {
         this.repositorioSalas = repositorioSalas;
         this.repositorioReservas = repositorioReservas;
         this.observadores = List.copyOf(observadores);
+        this.cadenaValidacion = cadenaValidacion;
     }
 
     public Optional<Reserva> realizarReserva(
@@ -25,10 +27,17 @@ public class ReservaFacade {
             EstrategiaSeleccionSala estrategia) {
 
         List<Sala> disponibles = repositorioSalas.obtenerDisponibles();
-        Optional<Sala> sala = estrategia.seleccionar(disponibles, personas);
+        Optional<Sala> salaElegida = estrategia.seleccionar(disponibles, personas);
 
-        if (sala.isEmpty()) {
+        if (salaElegida.isEmpty()) {
             System.out.println("No hay una sala disponible que cumpla la solicitud.");
+            return Optional.empty();
+        }
+
+        SolicitudReserva solicitud = new SolicitudReserva(estudiante, fecha, hora, duracion, personas, salaElegida.get());
+
+        if (!cadenaValidacion.validar(solicitud)) {
+            System.out.println("Solicitud rechazada por la cadena de validación.");
             return Optional.empty();
         }
 
@@ -38,12 +47,12 @@ public class ReservaFacade {
                 .horaInicio(hora)
                 .duracionHoras(duracion)
                 .cantidadPersonas(personas)
-                .sala(sala.get())
+                .sala(salaElegida.get())
                 .build();
 
         observadores.forEach(reserva::agregarObservador);
         repositorioReservas.guardar(reserva);
-        reserva.cambiarEstado("Confirmada");
+        reserva.cambiarEstado("Confirmada"); 
 
         return Optional.of(reserva);
     }

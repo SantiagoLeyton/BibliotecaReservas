@@ -12,6 +12,6 @@ public class Estudiante {
         this.identificador = identificador;
     }
 
-    public String getIdenticador() { return identificador; }
+    public String getIdentificador() { return identificador; }
     public String getNombre() { return nombre; }
 }
