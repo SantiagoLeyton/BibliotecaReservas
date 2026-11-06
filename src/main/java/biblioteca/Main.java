@@ -17,7 +17,7 @@ public class Main {
         ReservaFacade fachada = new ReservaFacade(salas, reservas, observadores);
         Estudiante laura = new Estudiante("E001", "Laura");
 
-        System.out.println("--- PRUEBA ESTACIÓN 6: OBSERVER Y FACHADA ---");
+        System.out.println("--- PRUEBA ESTACIÓN 7: STATE Y OBSERVER ---");
         
         Reserva reserva = fachada.realizarReserva(
             laura,
@@ -31,8 +31,11 @@ public class Main {
         System.out.println("\nEstado actual de la reserva:");
         System.out.println(reserva);
 
-        System.out.println("\n--- CAMBIO DE ESTADO MANUAL ---");
-        reserva.cambiarEstado("Cancelada");
+        System.out.println("\n--- CANCELANDO RESERVA ---");
+        reserva.cancelar();
         System.out.println(reserva);
+
+        System.out.println("\n--- INTENTANDO CONFIRMAR RESERVA CANCELADA ---");
+        reserva.confirmar();
     }
 }

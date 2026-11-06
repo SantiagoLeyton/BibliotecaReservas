@@ -13,7 +13,7 @@ public class Reserva {
     private final int duracionHoras;
     private final int cantidadPersonas;
     private final Sala sala;
-    private String estado = "Pendiente";
+    private EstadoReserva estado = new EstadoPendiente();
     private final List<ObservadorReserva> observadores = new ArrayList<>();
 
     public Reserva(String codigo, Estudiante estudiante, LocalDate fecha, LocalTime horaInicio, int duracionHoras, int cantidadPersonas, Sala sala) {
@@ -36,12 +36,20 @@ public class Reserva {
         observadores.remove(observador);
     }
 
-    public void cambiarEstado(String nuevoEstado) {
-        String anterior = this.estado;
+    public void setEstado(EstadoReserva nuevoEstado) {
+        String anterior = this.estado.getNombre();
         this.estado = nuevoEstado;
         for (ObservadorReserva observador : List.copyOf(observadores)) {
-            observador.actualizar(this, anterior, nuevoEstado);
+            observador.actualizar(this, anterior, nuevoEstado.getNombre());
         }
+    }
+
+    public void confirmar() {
+        estado.confirmar(this);
+    }
+
+    public void cancelar() {
+        estado.cancelar(this);
     }
 
     public String getCodigo() { return codigo; }
@@ -51,10 +59,10 @@ public class Reserva {
     public int getDuracionHoras() { return duracionHoras; }
     public int getCantidadPersonas() { return cantidadPersonas; }
     public Sala getSala() { return sala; }
-    public String getEstado() { return estado; }
+    public EstadoReserva getEstado() { return estado; }
 
     @Override
     public String toString() {
-        return "Reserva " + codigo + " | " + estudiante.getNombre() + " | " + fecha + " " + horaInicio + " | " + sala + " | Estado: " + estado;
+        return "Reserva " + codigo + " | " + estudiante.getNombre() + " | " + fecha + " " + horaInicio + " | " + sala + " | Estado: " + estado.getNombre();
     }
 }

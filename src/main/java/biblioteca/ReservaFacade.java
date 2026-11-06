@@ -43,7 +43,7 @@ public class ReservaFacade {
 
         observadores.forEach(reserva::agregarObservador);
         repositorioReservas.guardar(reserva);
-        reserva.cambiarEstado("Confirmada");
+        reserva.confirmar();
 
         return Optional.of(reserva);
     }
