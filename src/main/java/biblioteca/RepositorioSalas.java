@@ -1,5 +1,7 @@
 package main.java.biblioteca;
 
-public class RepositorioSalas {
-    
+import java.util.List;
+
+public interface RepositorioSalas {
+    List<Sala> obtenerDisponibles();
 }
