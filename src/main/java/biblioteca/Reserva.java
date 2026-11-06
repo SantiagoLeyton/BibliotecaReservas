@@ -2,6 +2,8 @@ package main.java.biblioteca;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Reserva {
     private final String codigo;
@@ -11,9 +13,10 @@ public class Reserva {
     private final int duracionHoras;
     private final int cantidadPersonas;
     private final Sala sala;
-    private String estado = "Pendiente"; //se pone en pendiente ya que aún no tenemos la clase de estado creada
+    private String estado = "Pendiente";
+    private final List<ObservadorReserva> observadores = new ArrayList<>();
 
-    public Reserva(String codigo, Estudiante estudiante, LocalDate fecha, LocalTime horaInicio, int duracionHoras, int cantidadPersonas, Sala sala /*, Estado estado*/) {
+    public Reserva(String codigo, Estudiante estudiante, LocalDate fecha, LocalTime horaInicio, int duracionHoras, int cantidadPersonas, Sala sala) {
         this.codigo = codigo;
         this.estudiante = estudiante;
         this.fecha = fecha;
@@ -21,7 +24,24 @@ public class Reserva {
         this.duracionHoras = duracionHoras;
         this.cantidadPersonas = cantidadPersonas;
         this.sala = sala;
-        //this.estado = estado;
+    }
+
+    public void agregarObservador(ObservadorReserva observador) {
+        if (observador != null) {
+            observadores.add(observador);
+        }
+    }
+
+    public void retirarObservador(ObservadorReserva observador) {
+        observadores.remove(observador);
+    }
+
+    public void cambiarEstado(String nuevoEstado) {
+        String anterior = this.estado;
+        this.estado = nuevoEstado;
+        for (ObservadorReserva observador : List.copyOf(observadores)) {
+            observador.actualizar(this, anterior, nuevoEstado);
+        }
     }
 
     public String getCodigo() { return codigo; }
@@ -31,10 +51,10 @@ public class Reserva {
     public int getDuracionHoras() { return duracionHoras; }
     public int getCantidadPersonas() { return cantidadPersonas; }
     public Sala getSala() { return sala; }
-    //public Estado getEstado() { return estado; }
+    public String getEstado() { return estado; }
 
-    @Override 
+    @Override
     public String toString() {
-        return "Reserva " + codigo + " | " + estudiante.getNombre() + " | " + fecha + " " + horaInicio + " | " + sala + " |  Estado: " + estado;
+        return "Reserva " + codigo + " | " + estudiante.getNombre() + " | " + fecha + " " + horaInicio + " | " + sala + " | Estado: " + estado;
     }
 }
