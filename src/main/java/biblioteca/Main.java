@@ -39,6 +39,9 @@ public class Main {
                 .cantidadPersonas(16) //puse un número de estudiantes muy alto, por ende, debe de salir un error
                 .sala(new Sala("C", "Sala C", 6))
                 .build();
+
+                System.out.println(reservaInvalida);
+                
         } catch (IllegalArgumentException e) {
             System.out.println("Excepción capturada; " + e.getMessage());
         }
