@@ -1,5 +1,8 @@
 package main.java.biblioteca;
 
-public class EstrategiaSeleccionSala {
-    
+import java.util.List;
+import java.util.Optional;
+
+public interface EstrategiaSeleccionSala {
+    Optional<Sala> seleccionar(List<Sala> disponibles, int cantidadPersonas);
 }
